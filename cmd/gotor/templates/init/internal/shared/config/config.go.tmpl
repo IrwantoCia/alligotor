@@ -18,7 +18,6 @@ type AppConfig struct {
 
 type AppCookieConfig struct {
 	CookieSecret string `mapstructure:"COOKIE_SECRET"`
-	CSRFSecret   string `mapstructure:"CSRF_SECRET"`
 }
 
 type DatabaseConfig struct {
@@ -70,7 +69,6 @@ func Load() (*AppConfig, error) {
 	viper.SetDefault("JWT.JWT_SECRET", "your-jwt-secret")
 
 	viper.SetDefault("APP_COOKIE.COOKIE_SECRET", "your-cookie-secret")
-	viper.SetDefault("APP_COOKIE.CSRF_SECRET", "your-csrf-secret")
 
 	viper.AutomaticEnv()
 
