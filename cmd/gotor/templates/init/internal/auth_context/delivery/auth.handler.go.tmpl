@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	csrf "github.com/utrack/gin-csrf"
 )
 
 type AuthHandler struct {
@@ -19,10 +18,8 @@ func NewAuthHandler(logger logger.Logger, authService application.AuthService) *
 }
 
 func (h *AuthHandler) RegisterPage(c *gin.Context) {
-	csrfToken := csrf.GetToken(c)
 	c.HTML(http.StatusOK, "register", gin.H{
 		"title": "Register",
-		"_csrf": csrfToken,
 	})
 }
 
@@ -51,10 +48,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 }
 
 func (h *AuthHandler) LoginPage(c *gin.Context) {
-	csrfToken := csrf.GetToken(c)
 	c.HTML(http.StatusOK, "login", gin.H{
 		"title": "Login",
-		"_csrf": csrfToken,
 	})
 }
 
