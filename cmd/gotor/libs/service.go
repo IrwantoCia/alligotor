@@ -20,6 +20,49 @@ func NewService(projectName string, templateRoot string, fs embed.FS) *Service {
 	}
 }
 
+func (s *Service) GetPaymentContextTasks(contextName string) (TaskList, error) {
+	files, err := s.ListFiles(s.TemplateRoot)
+	if err != nil {
+		return nil, err
+	}
+
+	folderTasks := TaskList{}
+	fileTasks := TaskList{}
+	folderMap := map[string]bool{} // to check unique folders
+
+	baseFolder := filepath.Join("internal", s.ConvertToLowerCamelCase(contextName)+"_context")
+
+	for _, file := range files {
+		outpath, err := s.GetOutpath(file)
+		if err != nil {
+			return nil, err
+		}
+		outpath = filepath.Join(baseFolder, outpath)
+
+		outpathDir := filepath.Dir(outpath)
+		if _, ok := folderMap[outpathDir]; !ok {
+			folderMap[outpathDir] = true
+			folderTasks = append(folderTasks, *NewTask(
+				outpathDir,
+				outpathDir,
+				map[string]interface{}{},
+				"folder",
+			))
+		}
+
+		fileTasks = append(fileTasks, *NewTask(
+			file,
+			outpath,
+			map[string]interface{}{
+				"ProjectName": s.ProjectName,
+			},
+			"file",
+		))
+	}
+
+	return append(folderTasks, fileTasks...), nil
+}
+
 func (s *Service) GetContextTasks(contextName string) (TaskList, error) {
 	files, err := s.ListFiles(s.TemplateRoot)
 	if err != nil {

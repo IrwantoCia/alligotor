@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -14,10 +15,17 @@ type AppConfig struct {
 	Server    ServerConfig    `mapstructure:"SERVER"`
 	JWT       JWTConfig       `mapstructure:"JWT"`
 	AppCookie AppCookieConfig `mapstructure:"APP_COOKIE"`
+	Doku      DokuConfig      `mapstructure:"DOKU"`
 }
 
 type AppCookieConfig struct {
 	CookieSecret string `mapstructure:"COOKIE_SECRET"`
+}
+
+type DokuConfig struct {
+	URL       string `mapstructure:"URL"`
+	ClientID  string `mapstructure:"CLIENT_ID"`
+	SecretKey string `mapstructure:"SECRET_KEY"`
 }
 
 type DatabaseConfig struct {
@@ -51,8 +59,16 @@ type JWTConfig struct {
 	AccessTokenExp time.Duration
 }
 
-func Load() (*AppConfig, error) {
-	godotenv.Load()
+func Load(path string) (*AppConfig, error) {
+	if path != "" {
+		// check if file exists
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			return nil, fmt.Errorf("file %s does not exist", path)
+		}
+		godotenv.Load(path)
+	} else {
+		godotenv.Load()
+	}
 
 	viper.SetDefault("LOG_LEVEL", "info")
 
@@ -69,6 +85,10 @@ func Load() (*AppConfig, error) {
 	viper.SetDefault("JWT.JWT_SECRET", "your-jwt-secret")
 
 	viper.SetDefault("APP_COOKIE.COOKIE_SECRET", "your-cookie-secret")
+
+	viper.SetDefault("DOKU.URL", "https://api-sandbox.doku.com/checkout/v1/payment")
+	viper.SetDefault("DOKU.CLIENT_ID", "your-client-id")
+	viper.SetDefault("DOKU.SECRET_KEY", "your-secret-key")
 
 	viper.AutomaticEnv()
 

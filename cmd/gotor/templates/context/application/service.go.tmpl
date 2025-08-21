@@ -10,12 +10,12 @@ type {{.ContextName}}Service interface {
 
 type {{.ContextNameCamel}}ServiceImpl struct {
 	logger          logger.Logger
-	config          config.JWTConfig
+	config          config
 }
 
 func New{{.ContextName}}Service(
 	logger logger.Logger,
-	config config.JWTConfig,
+	config config,
 ) {{.ContextName}}Service {
 	return &{{.ContextNameCamel}}ServiceImpl{
 		logger:          logger,

@@ -68,4 +68,35 @@ func CreateContext(contextName string, templatesFS embed.FS) {
 	}
 
 	tasks.Run(templatesFS)
+
+	// run go mod tidy
+	fmt.Println("Running go mod tidy")
+	exec.Command("go", "mod", "tidy").Run()
+}
+
+func CreatePaymentContext(contextName string, templatesFS embed.FS) {
+	// check if on project folder, by checking if go.mod exists
+	if _, err := os.Stat("go.mod"); err != nil {
+		fmt.Println("Not in project folder")
+		os.Exit(1)
+	}
+
+	// get project name, go.mod folder name
+	cwd, _ := os.Getwd()
+	projectName := filepath.Base(cwd)
+	fmt.Println("Project name: ", projectName)
+
+	// get tasks
+	service := NewService(projectName, "templates/payment_context", templatesFS)
+	tasks, err := service.GetPaymentContextTasks(contextName)
+	if err != nil {
+		fmt.Println("Error getting tasks")
+		os.Exit(1)
+	}
+
+	tasks.Run(templatesFS)
+
+	// run go mod tidy
+	fmt.Println("Running go mod tidy")
+	exec.Command("go", "mod", "tidy").Run()
 }

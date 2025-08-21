@@ -27,7 +27,7 @@ import (
 
 func main() {
 	// --- 1. Instantiate the Shared Logger ---
-	appConfig, err := config.Load()
+	appConfig, err := config.Load("")
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}

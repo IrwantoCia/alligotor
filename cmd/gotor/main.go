@@ -16,6 +16,7 @@ func main() {
 	if len(os.Args) < 3 {
 		fmt.Println("Help:")
 		fmt.Println("	Usage: gotor init <project_name>")
+		fmt.Println("	Usage: gotor payment")
 		fmt.Println("	Usage: gotor context <context_name>")
 		os.Exit(1)
 	}
@@ -26,6 +27,8 @@ func main() {
 	switch command {
 	case "init":
 		libs.InitProject(contextName, templatesFS)
+	case "payment":
+		libs.CreatePaymentContext("payment", templatesFS)
 	case "context":
 		libs.CreateContext(contextName, templatesFS)
 	}
